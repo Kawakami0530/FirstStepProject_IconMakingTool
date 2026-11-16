@@ -248,11 +248,16 @@ function drawRole(performer, accent, baseline) {
 function drawPerformer(performer, font, accent) {
   const { image, x, y, size, label, nameSize, roleSize, name } = performer;
   context.save();
+  context.beginPath();
+  context.roundRect(x, y, size, size, 14);
   if (image) {
+    context.save();
+    context.clip();
     cover(image, x, y, size, size);
+    context.restore();
   } else {
     context.fillStyle = "#171326b3";
-    context.fillRect(x, y, size, size);
+    context.fill();
     context.fillStyle = "#f4eefe";
     context.font = `500 34px ${roleFont}`;
     context.textAlign = "center";
