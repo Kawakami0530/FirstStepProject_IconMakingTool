@@ -6,6 +6,7 @@ const save = document.querySelector("#save");
 const status = document.querySelector("#status");
 const presets = document.querySelector("#presets");
 const effectSelect = document.querySelector("#effect");
+const fontSelect = document.querySelector("#font");
 const logo = new Image();
 let logoReady = false;
 let background = null;
@@ -29,9 +30,18 @@ const effects = {
   sparkles: drawSparkles
 };
 
+const fonts = {
+  sans: { family: '"Hiragino Sans", Meiryo, system-ui, sans-serif', weight: 750 },
+  serif: { family: 'Georgia, "Yu Mincho", "Hiragino Mincho ProN", "Noto Serif CJK JP", serif', weight: 600 },
+  rounded: { family: 'ui-rounded, "Hiragino Maru Gothic ProN", "Arial Rounded MT Bold", "Trebuchet MS", sans-serif', weight: 700 },
+  mono: { family: 'ui-monospace, "SFMono-Regular", Consolas, "Courier New", monospace', weight: 700 }
+};
+
+const bottomLine = 850;
+const composerSize = 405;
 const performers = [
-  { id: "vocal", label: "Vocal", x: 172, y: 132, size: 568, nameSize: 96, roleSize: 42 },
-  { id: "composer", label: "Composer", x: 1230, y: 447, size: 405, nameSize: 70, roleSize: 34 }
+  { id: "vocal", label: "Vocal", icon: drawMicrophone, x: 172, y: 132, size: 568, nameSize: 96, roleSize: 50 },
+  { id: "composer", label: "Composer", icon: drawNote, x: 1230, y: bottomLine - composerSize, size: composerSize, nameSize: 70, roleSize: 44, textAbove: true }
 ].map(performer => ({
   ...performer,
   image: null,
@@ -181,7 +191,53 @@ function drawSparkle(target, x, y, radius, color) {
   target.fill();
 }
 
-function drawPerformer(performer, accent) {
+function drawMicrophone() {
+  context.beginPath();
+  context.roundRect(9, 2, 12, 20, 6);
+  context.moveTo(5, 16);
+  context.arc(15, 16, 10, Math.PI, 0, true);
+  context.moveTo(15, 26);
+  context.lineTo(15, 31);
+  context.moveTo(10, 31);
+  context.lineTo(20, 31);
+  context.stroke();
+}
+
+function drawNote() {
+  context.beginPath();
+  context.moveTo(13, 24);
+  context.lineTo(13, 7);
+  context.lineTo(28, 3);
+  context.lineTo(28, 20);
+  context.moveTo(13, 12);
+  context.lineTo(28, 8);
+  context.stroke();
+  for (const [x, y] of [[8, 25], [23, 21]]) {
+    context.beginPath();
+    context.ellipse(x, y, 5.5, 3.7, -0.36, 0, Math.PI * 2);
+    context.fill();
+  }
+}
+
+function drawRole(performer, font, accent, baseline) {
+  const { x, label, roleSize, icon } = performer;
+  context.font = `600 ${roleSize}px ${font.family}`;
+  context.fillStyle = accent;
+  context.fillText(label, x + roleSize, baseline);
+
+  const scale = roleSize / 38;
+  context.save();
+  context.translate(x, baseline - 31 * scale);
+  context.scale(scale, scale);
+  context.strokeStyle = accent;
+  context.lineWidth = 2.4;
+  context.lineCap = "round";
+  context.lineJoin = "round";
+  icon();
+  context.restore();
+}
+
+function drawPerformer(performer, font, accent) {
   const { image, x, y, size, label, nameSize, roleSize, name } = performer;
   context.save();
   if (image) {
@@ -190,7 +246,7 @@ function drawPerformer(performer, accent) {
     context.fillStyle = "#171326b3";
     context.fillRect(x, y, size, size);
     context.fillStyle = "#f4eefe";
-    context.font = "500 34px system-ui, sans-serif";
+    context.font = `500 34px ${font.family}`;
     context.textAlign = "center";
     context.textBaseline = "middle";
     context.fillText(label, x + size / 2, y + size / 2);
@@ -199,8 +255,9 @@ function drawPerformer(performer, accent) {
   const value = name.value.trim();
   let fontSize = nameSize;
   do {
-    context.font = `750 ${fontSize}px "Hiragino Sans", Meiryo, system-ui, sans-serif`;
-    if (context.measureText(value).width <= size + 18) break;
+    context.font = `${font.weight} ${fontSize}px ${font.family}`;
+    const metrics = context.measureText(value);
+    if (Math.max(metrics.width, metrics.actualBoundingBoxRight ?? 0) <= size + 18) break;
     fontSize -= 2;
   } while (fontSize >= 30);
 
@@ -210,11 +267,10 @@ function drawPerformer(performer, accent) {
   context.shadowBlur = 10;
   context.shadowOffsetY = 2;
   context.fillStyle = "#fff";
-  const baseline = y + size + nameSize * 0.94;
-  if (fontSize >= 30) context.fillText(value, x, baseline);
-  context.font = `550 ${roleSize}px system-ui, sans-serif`;
-  context.fillStyle = accent;
-  context.fillText(label, x, baseline + roleSize + 8);
+  const nameBaseline = performer.textAbove ? y - 22 : bottomLine - roleSize - 10;
+  if (fontSize >= 30) context.fillText(value, x, nameBaseline);
+  const roleBaseline = performer.textAbove ? nameBaseline - nameSize - 9 : bottomLine;
+  drawRole(performer, font, accent, roleBaseline);
   context.restore();
   return fontSize >= 30;
 }
@@ -247,6 +303,7 @@ function drawCollaborationMark(accent) {
 
 function render() {
   const theme = themes[activePreset];
+  const font = fonts[fontSelect.value] || fonts.sans;
   const effectTheme = background ? themes[1] : theme;
   const accent = effectTheme.colors[3];
   if (background) cover(background, 0, 0, canvas.width, canvas.height);
@@ -263,7 +320,7 @@ function render() {
   let longName = false;
   for (const performer of performers) {
     const name = performer.name.value.trim();
-    const fits = drawPerformer(performer, accent);
+    const fits = drawPerformer(performer, font, accent);
     longName ||= !fits;
     ready &&= Boolean(performer.image && name && fits);
     performer.name.setCustomValidity(fits ? "" : "画像に収まるよう名前を短くしてください。");
@@ -342,6 +399,9 @@ for (const [index, theme] of themes.entries()) {
 }
 updatePresetButtons();
 effectSelect.addEventListener("change", render);
+fontSelect.addEventListener("change", () => {
+  status.textContent = render() ? "画像に収まるよう名前を短くしてください。" : "";
+});
 bindImage("background", image => {
   background = image;
   updatePresetButtons();
@@ -388,6 +448,7 @@ save.addEventListener("click", () => {
 window.addEventListener("pageshow", () => {
   for (const input of document.querySelectorAll("input")) input.value = "";
   effectSelect.value = "";
+  fontSelect.value = "sans";
   render();
 }, { once: true });
 render();
