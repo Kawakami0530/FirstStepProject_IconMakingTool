@@ -19,7 +19,8 @@ canvas { border: 1px solid #40384e; display: block; width: 100%; height: auto; b
 fieldset { margin: 0; min-width: 0; padding: 10px 13px 14px; border: 1px solid #40384e; border-radius: 12px; background: #1b1726; }
 legend { padding: 0 6px; font-weight: 750; }
 label { display: block; font-size: .85rem; color: #e2d9ee; margin: 8px 0 5px; }
-input { width: 100%; min-height: 42px; padding: 7px; border: 1px solid #4d435d; border-radius: 7px; background: #13101c; color: inherit; font: inherit; }
+input, select { width: 100%; min-height: 42px; padding: 7px; border: 1px solid #4d435d; border-radius: 7px; background: #13101c; color: inherit; font: inherit; }
+select { padding-inline: 10px; }
 input[type=file] { font-size: .8rem; }
 input::file-selector-button { border: 0; padding: 5px 8px; border-radius: 4px; color: #f7f3ff; background: #363047; margin-right: 8px; cursor: pointer; }
 button { font: inherit; cursor: pointer; }

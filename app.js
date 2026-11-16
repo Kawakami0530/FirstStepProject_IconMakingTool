@@ -5,6 +5,7 @@ const context = canvas.getContext("2d", { alpha: false });
 const save = document.querySelector("#save");
 const status = document.querySelector("#status");
 const presets = document.querySelector("#presets");
+const effectSelect = document.querySelector("#effect");
 const logo = new Image();
 let logoReady = false;
 let background = null;
@@ -13,16 +14,24 @@ let exporting = false;
 const pending = new Set();
 
 const themes = [
-  { name: "ルビー", colors: ["#230d24", "#8c2345", "#fa5278", "#ffb676"], origin: [1130, 410], angle: -0.38, seed: 9 },
-  { name: "オーロラ", colors: ["#11152e", "#443784", "#ac79ff", "#7ce7fc"], origin: [780, 340], angle: 0.48, seed: 17 },
-  { name: "ラグーン", colors: ["#0c2432", "#16566d", "#5aebd7", "#80ddff"], origin: [990, 600], angle: -0.66, seed: 22 },
-  { name: "ミッドナイト", colors: ["#0c1129", "#25356b", "#727ff8", "#cabaed"], origin: [1200, 460], angle: 0.28, seed: 39 },
-  { name: "アンバー", colors: ["#281320", "#8d432c", "#ffc165", "#ffe1a0"], origin: [930, 370], angle: -0.22, seed: 50 }
+  { name: "ルビー", colors: ["#230d24", "#8c2345", "#fa5278", "#ffb676"], seed: 9 },
+  { name: "オーロラ", colors: ["#11152e", "#443784", "#ac79ff", "#7ce7fc"], seed: 17 },
+  { name: "ラグーン", colors: ["#0c2432", "#16566d", "#5aebd7", "#80ddff"], seed: 22 },
+  { name: "ミッドナイト", colors: ["#0c1129", "#25356b", "#727ff8", "#cabaed"], seed: 39 },
+  { name: "アンバー", colors: ["#281320", "#8d432c", "#ffc165", "#ffe1a0"], seed: 50 }
 ];
 
+const effects = {
+  sweep: drawSweep,
+  beam: drawBeam,
+  haze: drawHaze,
+  prism: drawPrism,
+  sparkles: drawSparkles
+};
+
 const performers = [
-  { id: "vocal", label: "ボーカル", x: 220, y: 140, size: 600, nameSize: 86, maxWidth: 730 },
-  { id: "composer", label: "コンポーザー", x: 1175, y: 238, size: 500, nameSize: 64, maxWidth: 580 }
+  { id: "vocal", label: "Vocal", x: 172, y: 132, size: 568, nameSize: 96, roleSize: 42 },
+  { id: "composer", label: "Composer", x: 1230, y: 447, size: 405, nameSize: 70, roleSize: 34 }
 ].map(performer => ({
   ...performer,
   image: null,
@@ -37,6 +46,14 @@ function cover(image, x, y, width, height) {
     (image.naturalHeight - cropHeight) / 2, cropWidth, cropHeight, x, y, width, height);
 }
 
+function glow(target, x, y, radius, color, opacity) {
+  const light = target.createRadialGradient(x, y, 0, x, y, radius);
+  light.addColorStop(0, color + opacity);
+  light.addColorStop(1, color + "00");
+  target.fillStyle = light;
+  target.fillRect(x - radius, y - radius, 2 * radius, 2 * radius);
+}
+
 function drawTheme(theme, target = context) {
   const [dark, middle, light, accent] = theme.colors;
   const gradient = target.createLinearGradient(95, 980, 1790, 100);
@@ -45,29 +62,81 @@ function drawTheme(theme, target = context) {
   gradient.addColorStop(1, dark);
   target.fillStyle = gradient;
   target.fillRect(0, 0, canvas.width, canvas.height);
+  glow(target, 290, 230, 770, light, "75");
+  glow(target, 1595, 465, 660, accent, "54");
+  glow(target, 1190, 1080, 520, light, "48");
+}
 
-  for (const [x, y, radius, color] of [
-    [290, 230, 770, light], [1595, 465, 660, accent], [1190, 1080, 520, light]
-  ]) {
-    const glow = target.createRadialGradient(x, y, 0, x, y, radius);
-    glow.addColorStop(0, color + "a8");
-    glow.addColorStop(1, color + "00");
-    target.fillStyle = glow;
-    target.fillRect(0, 0, canvas.width, canvas.height);
+function drawSweep(theme) {
+  const accent = theme.colors[3];
+  context.beginPath();
+  context.moveTo(-20, 1070);
+  context.bezierCurveTo(175, 860, 730, 990, 1000, 590);
+  context.bezierCurveTo(1280, 175, 1720, 330, 1920, -25);
+  context.shadowColor = accent;
+  context.shadowBlur = 22;
+  context.strokeStyle = accent + "ae";
+  context.lineWidth = 2;
+  context.stroke();
+  context.shadowBlur = 0;
+  for (const [x, y] of [[117, 985], [820, 767], [1757, 147]]) {
+    glow(context, x, y, 20, accent, "a8");
+    context.beginPath();
+    context.arc(x, y, 3.5, 0, Math.PI * 2);
+    context.fillStyle = "#fffaf6";
+    context.fill();
   }
+}
 
-  target.save();
-  target.translate(...theme.origin);
-  target.rotate(theme.angle);
-  for (let i = 0; i < 8; i++) {
-    target.strokeStyle = (i % 2 ? accent : light) + (i % 3 === 0 ? "68" : "3d");
-    target.lineWidth = i % 3 === 0 ? 4 : 1.5;
-    target.beginPath();
-    target.ellipse(0, 0, 610 + 58 * i, 190 + 28 * i, 0, 0, Math.PI * 2);
-    target.stroke();
+function drawBeam(theme) {
+  const accent = theme.colors[3];
+  glow(context, 1540, 198, 555, accent, "64");
+  glow(context, 304, 990, 340, accent, "30");
+  context.translate(960, 541);
+  context.rotate(0.50);
+  const band = context.createLinearGradient(0, -76, 0, 76);
+  band.addColorStop(0, accent + "00");
+  band.addColorStop(0.4, accent + "32");
+  band.addColorStop(0.5, accent + "ae");
+  band.addColorStop(0.55, accent + "24");
+  band.addColorStop(1, accent + "00");
+  context.fillStyle = band;
+  context.fillRect(-1190, -76, 2380, 152);
+}
+
+function drawHaze(theme) {
+  const [, , light, accent] = theme.colors;
+  glow(context, 1470, 175, 660, accent, "8b");
+  glow(context, 372, 918, 470, light, "74");
+  glow(context, 966, 532, 420, accent, "25");
+}
+
+function drawPrism(theme) {
+  const [, , light, accent] = theme.colors;
+  for (const [x, y, angle] of [[1430, 180, -0.41], [340, 944, -0.22]]) {
+    context.save();
+    context.translate(x, y);
+    context.rotate(angle);
+    const band = context.createLinearGradient(0, -88, 0, 88);
+    band.addColorStop(0, light + "00");
+    band.addColorStop(0.28, light + "70");
+    band.addColorStop(0.54, accent + "60");
+    band.addColorStop(0.72, "#fff2ba46");
+    band.addColorStop(1, accent + "00");
+    context.fillStyle = band;
+    context.beginPath();
+    context.moveTo(-630, -94);
+    context.lineTo(535, -55);
+    context.lineTo(620, 75);
+    context.lineTo(-515, 105);
+    context.closePath();
+    context.fill();
+    context.restore();
   }
-  target.restore();
+}
 
+function drawSparkles(theme, target = context) {
+  const accent = theme.colors[3];
   let seed = theme.seed;
   const random = () => {
     seed = (Math.imul(1664525, seed) + 1013904223) >>> 0;
@@ -94,12 +163,6 @@ function drawTheme(theme, target = context) {
       target.fill();
     }
   }
-  target.strokeStyle = accent + "85";
-  target.lineWidth = 2;
-  target.strokeRect(37, 37, 1846, 1006);
-  target.strokeStyle = accent + "36";
-  target.lineWidth = 1;
-  target.strokeRect(49, 49, 1822, 982);
 }
 
 function drawSparkle(target, x, y, radius, color) {
@@ -118,114 +181,83 @@ function drawSparkle(target, x, y, radius, color) {
   target.fill();
 }
 
-function roundedBox(x, y, width, height, radius) {
-  context.beginPath();
-  context.roundRect(x, y, width, height, radius);
-}
-
 function drawPerformer(performer, accent) {
-  const { image, x, y, size, label, maxWidth, nameSize, name } = performer;
-  const center = x + size / 2;
-  const frame = context.createLinearGradient(x, y, x + size, y + size);
-  frame.addColorStop(0, "#fff6e6");
-  frame.addColorStop(0.5, accent);
-  frame.addColorStop(1, "#fff6e6");
-
+  const { image, x, y, size, label, nameSize, roleSize, name } = performer;
   context.save();
-  roundedBox(x - 14, y - 14, size + 28, size + 28, 32);
-  context.fillStyle = "#171226";
-  context.shadowColor = "#1009169c";
-  context.shadowBlur = 42;
-  context.shadowOffsetY = 15;
-  context.fill();
-  context.restore();
-  roundedBox(x - 14, y - 14, size + 28, size + 28, 32);
-  context.lineWidth = 3;
-  context.strokeStyle = frame;
-  context.stroke();
-
-  context.save();
-  roundedBox(x, y, size, size, 20);
-  context.clip();
-  context.fillStyle = "#21192f";
-  context.fillRect(x, y, size, size);
-  if (image) cover(image, x, y, size, size);
-  else {
-    context.fillStyle = "#e6daf8";
-    context.font = "600 36px system-ui, sans-serif";
+  if (image) {
+    cover(image, x, y, size, size);
+  } else {
+    context.fillStyle = "#171326b3";
+    context.fillRect(x, y, size, size);
+    context.fillStyle = "#f4eefe";
+    context.font = "500 34px system-ui, sans-serif";
     context.textAlign = "center";
     context.textBaseline = "middle";
-    context.fillText(label, center, y + size / 2);
+    context.fillText(label, x + size / 2, y + size / 2);
   }
-  context.restore();
 
-  const plateY = y + size - 20;
-  const plateHeight = nameSize + 68;
-  const plateWidth = maxWidth + 50;
-  roundedBox(center - plateWidth / 2, plateY, plateWidth, plateHeight, 24);
-  const plate = context.createLinearGradient(center, plateY, center, plateY + plateHeight);
-  plate.addColorStop(0, "#30243b");
-  plate.addColorStop(1, "#120f1c");
-  context.fillStyle = plate;
-  context.fill();
-  context.strokeStyle = frame;
-  context.lineWidth = 2;
-  context.stroke();
-  drawSparkle(context, center, plateY + 14, 9, accent);
-  return drawName(name.value.trim(), performer, plateY + (plateHeight + 10) / 2);
+  const value = name.value.trim();
+  let fontSize = nameSize;
+  do {
+    context.font = `750 ${fontSize}px "Hiragino Sans", Meiryo, system-ui, sans-serif`;
+    if (context.measureText(value).width <= size + 18) break;
+    fontSize -= 2;
+  } while (fontSize >= 30);
+
+  context.textAlign = "left";
+  context.textBaseline = "alphabetic";
+  context.shadowColor = "#110b22";
+  context.shadowBlur = 10;
+  context.shadowOffsetY = 2;
+  context.fillStyle = "#fff";
+  const baseline = y + size + nameSize * 0.94;
+  if (fontSize >= 30) context.fillText(value, x, baseline);
+  context.font = `550 ${roleSize}px system-ui, sans-serif`;
+  context.fillStyle = accent;
+  context.fillText(label, x, baseline + roleSize + 8);
+  context.restore();
+  return fontSize >= 30;
 }
 
 function drawCollaborationMark(accent) {
-  const x = 988;
-  const y = 457;
+  const x = 985;
+  const y = 544;
+  context.save();
+  context.shadowColor = "#181023";
+  context.shadowBlur = 6;
   context.beginPath();
-  context.arc(x, y, 58, 0, Math.PI * 2);
-  context.fillStyle = "#1c1529";
-  context.fill();
-  context.strokeStyle = accent;
-  context.lineWidth = 2.5;
+  context.moveTo(x - 178, y);
+  context.lineTo(x - 62, y);
+  context.moveTo(x + 62, y);
+  context.lineTo(x + 178, y);
+  context.strokeStyle = accent + "c0";
+  context.lineWidth = 2;
   context.stroke();
 
   context.beginPath();
-  context.moveTo(x - 18, y - 18);
-  context.lineTo(x + 18, y + 18);
-  context.moveTo(x + 18, y - 18);
-  context.lineTo(x - 18, y + 18);
-  context.lineCap = "round";
-  context.lineWidth = 7;
-  context.strokeStyle = "#fff6e6";
+  context.moveTo(x - 20, y - 20);
+  context.lineTo(x + 20, y + 20);
+  context.moveTo(x + 20, y - 20);
+  context.lineTo(x - 20, y + 20);
+  context.strokeStyle = "#fffaf6";
+  context.lineWidth = 3;
   context.stroke();
-  drawSparkle(context, x, y - 58, 10, accent);
-  drawSparkle(context, x, y + 58, 10, accent);
-}
-
-function drawName(name, performer, y) {
-  let size = performer.nameSize;
-  do {
-    context.font = `800 ${size}px "Hiragino Sans", Meiryo, system-ui, sans-serif`;
-    if (context.measureText(name).width <= performer.maxWidth) break;
-    size -= 2;
-  } while (size >= 30);
-
-  if (size < 30) return false;
-  const x = performer.x + performer.size / 2;
-  context.textAlign = "center";
-  context.textBaseline = "middle";
-  context.lineJoin = "round";
-  context.strokeStyle = "#100d18";
-  context.lineWidth = Math.max(3, size / 18);
-  context.fillStyle = "#fff";
-  context.strokeText(name, x, y);
-  context.fillText(name, x, y);
-  return true;
+  context.restore();
 }
 
 function render() {
   const theme = themes[activePreset];
-  const accent = background ? "#eed3a0" : theme.colors[3];
+  const effectTheme = background ? themes[1] : theme;
+  const accent = effectTheme.colors[3];
   if (background) cover(background, 0, 0, canvas.width, canvas.height);
   else drawTheme(theme);
 
+  const drawEffect = effects[effectSelect.value];
+  if (drawEffect) {
+    context.save();
+    drawEffect(effectTheme);
+    context.restore();
+  }
   drawCollaborationMark(accent);
   let ready = true;
   let longName = false;
@@ -309,6 +341,7 @@ for (const [index, theme] of themes.entries()) {
   presets.append(button);
 }
 updatePresetButtons();
+effectSelect.addEventListener("change", render);
 bindImage("background", image => {
   background = image;
   updatePresetButtons();
@@ -354,6 +387,7 @@ save.addEventListener("click", () => {
 
 window.addEventListener("pageshow", () => {
   for (const input of document.querySelectorAll("input")) input.value = "";
+  effectSelect.value = "";
   render();
 }, { once: true });
 render();

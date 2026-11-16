@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="First Step Projectのコラボ告知画像をフルHDで作成。">
 <title>コラボ画像メーカー | First Step Project</title>
-<link rel="stylesheet" href="style.css?v=2">
-<script defer src="app.js?v=2"></script>
+<link rel="stylesheet" href="style.css?v=3">
+<script defer src="app.js?v=3"></script>
 </head>
 <body>
 <main>
@@ -22,6 +22,15 @@
 <div id="presets" class="presets" role="group" aria-label="デフォルト背景"></div>
 <label for="background">好きな背景をアップロード</label>
 <input id="background" type="file" accept="image/*">
+<label for="effect">背景エフェクト</label>
+<select id="effect" autocomplete="off">
+<option value="">なし</option>
+<option value="sweep">光の曲線</option>
+<option value="beam">斜めの光</option>
+<option value="haze">光だまり</option>
+<option value="prism">プリズム</option>
+<option value="sparkles">きらめき</option>
+</select>
 </fieldset>
 <fieldset>
 <legend>ボーカル</legend>
