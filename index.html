@@ -8,8 +8,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+1+Code:wght@700&amp;family=Noto+Sans+JP:wght@800&amp;family=Noto+Serif+JP:wght@700&amp;family=Zen+Maru+Gothic:wght@700&amp;display=swap">
-<link rel="stylesheet" href="style.css?v=6">
-<script defer src="app.js?v=6"></script>
+<link rel="stylesheet" href="style.css?v=7">
+<script defer src="app.js?v=7"></script>
 </head>
 <body>
 <main>
@@ -17,7 +17,6 @@
 <div class="workspace">
 <section class="preview" aria-label="プレビュー">
 <canvas id="preview" width="1920" height="1080" aria-label="コラボ告知画像のプレビュー"></canvas>
-<p class="dimensions">1920 × 1080 px</p>
 </section>
 <section class="controls" aria-label="画像の設定">
 <fieldset>
@@ -33,15 +32,21 @@
 <option value="sparkles">きらめき</option>
 </select>
 </fieldset>
-<fieldset>
+<fieldset class="performer-fields">
 <legend>ボーカル</legend>
-<label for="vocal">アイコン画像</label><input id="vocal" type="file" accept="image/*">
-<label for="vocal-name">ボーカル名</label><input id="vocal-name" type="text" autocomplete="off" placeholder="ボーカル名を入力">
+<input id="vocal-name" type="text" autocomplete="off" aria-label="ボーカル名" placeholder="ボーカル名">
+<label class="file-field">
+<span class="file-caption" id="vocal-file-caption" aria-hidden="true">アイコン画像</span>
+<input id="vocal" type="file" accept="image/*" aria-label="ボーカルのアイコン画像">
+</label>
 </fieldset>
-<fieldset>
+<fieldset class="performer-fields">
 <legend>コンポーザー</legend>
-<label for="composer">アイコン画像</label><input id="composer" type="file" accept="image/*">
-<label for="composer-name">コンポーザー名</label><input id="composer-name" type="text" autocomplete="off" placeholder="コンポーザー名を入力">
+<input id="composer-name" type="text" autocomplete="off" aria-label="コンポーザー名" placeholder="コンポーザー名">
+<label class="file-field">
+<span class="file-caption" id="composer-file-caption" aria-hidden="true">アイコン画像</span>
+<input id="composer" type="file" accept="image/*" aria-label="コンポーザーのアイコン画像">
+</label>
 </fieldset>
 <details class="advanced">
 <summary>詳細設定</summary>

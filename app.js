@@ -375,7 +375,7 @@ function bindImage(id, acceptImage) {
       const image = new Image();
       image.src = url;
       await image.decode();
-      if (version === request && input.files[0] === file) acceptImage(image);
+      if (version === request && input.files[0] === file) acceptImage(image, file);
     } catch {
       if (version === request && input.files[0] === file) {
         input.value = "";
@@ -438,7 +438,12 @@ bindImage("background", image => {
 });
 
 for (const performer of performers) {
-  bindImage(performer.id, image => { performer.image = image; });
+  const caption = document.querySelector(`#${performer.id}-file-caption`);
+  bindImage(performer.id, (image, file) => {
+    performer.image = image;
+    caption.textContent = file.name;
+    caption.classList.add("has-file");
+  });
   performer.name.addEventListener("input", refreshNameFonts);
 }
 
