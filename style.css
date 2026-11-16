@@ -13,7 +13,8 @@ h1 { margin: 0; font-size: clamp(1.55rem, 4vw, 2.6rem); line-height: 1.25; }
 .workspace { display: grid; grid-template-columns: minmax(290px, .7fr) minmax(0, 1.7fr); gap: 24px; align-items: start; }
 .preview { grid-column: 2; grid-row: 1; min-width: 0; position: sticky; top: 16px; }
 canvas { border: 1px solid #40384e; display: block; width: 100%; height: auto; border-radius: 12px; background: #221b32; }
-.export { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; gap: 12px; color: #ccc3dc; font-size: .85rem; }
+.dimensions { margin: 8px 0 0; color: #ccc3dc; font-size: .85rem; text-align: right; }
+.export { display: grid; justify-items: end; gap: 8px; margin-top: 24px; padding-top: 18px; border-top: 1px solid #40384e; }
 .controls { grid-column: 1; grid-row: 1; display: grid; gap: 15px; min-width: 0; }
 fieldset { margin: 0; min-width: 0; padding: 10px 13px 14px; border: 1px solid #40384e; border-radius: 12px; background: #1b1726; }
 legend { padding: 0 6px; font-weight: 750; }
@@ -22,15 +23,16 @@ input { width: 100%; min-height: 42px; padding: 7px; border: 1px solid #4d435d; 
 input[type=file] { font-size: .8rem; }
 input::file-selector-button { border: 0; padding: 5px 8px; border-radius: 4px; color: #f7f3ff; background: #363047; margin-right: 8px; cursor: pointer; }
 button { font: inherit; cursor: pointer; }
-#save { background: #d5c1ff; color: #211737; border: 0; padding: 11px 16px; border-radius: 8px; font-weight: 800; }
+#save { min-width: min(100%, 230px); background: #d5c1ff; color: #211737; border: 0; padding: 11px 16px; border-radius: 8px; font-weight: 800; }
 #save:disabled { opacity: .5; cursor: default; }
 .presets { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 7px; }
 .presets button { border-radius: 7px; min-height: 42px; border: 1px solid #7c6d94; color: white; text-shadow: 0 1px 4px black; font-size: .7rem; font-weight: 800; padding: 0; }
 .presets button[aria-pressed=true] { outline: 2px solid #e0ccff; outline-offset: 2px; }
 :focus-visible { outline: 2px solid #d5c1ff; outline-offset: 3px; }
-#status, .privacy { font-size: .8rem; color: #ccc3dc; margin: 0; line-height: 1.5; }
-#status:not(:empty) { margin-top: 7px; }
+#status { font-size: .8rem; color: #ccc3dc; margin: 0; line-height: 1.5; }
+#status:empty { display: none; }
 @media (max-width: 760px) {
   .workspace { display: flex; flex-direction: column; gap: 16px; align-items: stretch; }
   .preview { position: static; }
+  #save { width: 100%; }
 }

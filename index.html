@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="First Step Projectのコラボ告知画像をフルHDで作成。">
 <title>コラボ画像メーカー | First Step Project</title>
-<link rel="stylesheet" href="style.css">
-<script defer src="app.js"></script>
+<link rel="stylesheet" href="style.css?v=2">
+<script defer src="app.js?v=2"></script>
 </head>
 <body>
 <main>
@@ -14,14 +14,13 @@
 <div class="workspace">
 <section class="preview" aria-label="プレビュー">
 <canvas id="preview" width="1920" height="1080" aria-label="コラボ告知画像のプレビュー"></canvas>
-<div class="export"><span>1920 × 1080 px</span><button id="save" type="button" disabled>PNGを保存</button></div>
-<p id="status" role="status"></p>
+<p class="dimensions">1920 × 1080 px</p>
 </section>
 <section class="controls" aria-label="画像の設定">
 <fieldset>
 <legend>背景</legend>
 <div id="presets" class="presets" role="group" aria-label="デフォルト背景"></div>
-<label for="background">背景画像を選ぶ</label>
+<label for="background">好きな背景をアップロード</label>
 <input id="background" type="file" accept="image/*">
 </fieldset>
 <fieldset>
@@ -34,9 +33,12 @@
 <label for="composer">アイコン画像</label><input id="composer" type="file" accept="image/*">
 <label for="composer-name">コンポーザー名</label><input id="composer-name" type="text" autocomplete="off" placeholder="コンポーザー名を入力">
 </fieldset>
-<p class="privacy">選んだ画像と名前は端末内で処理され、ページを再読み込みすると消えます。</p>
 </section>
 </div>
+<footer class="export">
+<p id="status" role="status"></p>
+<button id="save" type="button" disabled>画像を保存</button>
+</footer>
 </main>
 </body>
 </html>
