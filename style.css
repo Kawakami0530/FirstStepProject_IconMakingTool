@@ -25,7 +25,16 @@ input::file-selector-button { font: inherit; border: 0; padding: 5px 8px; border
 button { font: inherit; cursor: pointer; }
 .panel { min-width: 0; border: 1px solid #40384e; border-radius: 12px; background: #1b1726; }
 .panel summary { padding: 11px 13px; cursor: pointer; font-size: .75rem; font-weight: 650; }
-.advanced summary { font-size: 1rem; font-weight: 750; }
+.panel:not(.advanced) { margin-top: 8px; }
+.panel:not(.advanced) summary {
+  width: max-content;
+  margin: -15px 0 0 9px;
+  padding: 7px 6px;
+  line-height: 16px;
+  list-style-position: inside;
+  background: linear-gradient(#11101a 50%, #1b1726 50%);
+}
+.panel:not(.advanced):not([open]) { padding-bottom: 8px; }
 .panel-fields { padding: 0 13px 14px; }
 .logo-setting { display: flex; align-items: center; gap: 8px; margin: 12px 0 0; cursor: pointer; }
 .logo-setting input { margin: 0; accent-color: #d5c1ff; }
