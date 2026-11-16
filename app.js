@@ -37,11 +37,12 @@ const fonts = {
   mono: { family: 'ui-monospace, "SFMono-Regular", Consolas, "Courier New", monospace', weight: 700 }
 };
 
-const bottomLine = 850;
-const composerSize = 405;
+const roleFont = "system-ui, sans-serif";
+const bottomLine = 865;
+const composerSize = 460;
 const performers = [
-  { id: "vocal", label: "Vocal", icon: drawMicrophone, x: 172, y: 132, size: 568, nameSize: 96, roleSize: 50 },
-  { id: "composer", label: "Composer", icon: drawNote, x: 1230, y: bottomLine - composerSize, size: composerSize, nameSize: 70, roleSize: 44, textAbove: true }
+  { id: "vocal", label: "Vocal", icon: drawMicrophone, x: 172, y: 91, size: 620, nameSize: 96, roleSize: 50 },
+  { id: "composer", label: "Composer", icon: drawNote, x: 1215, y: bottomLine - composerSize, size: composerSize, nameSize: 70, roleSize: 44, textAbove: true }
 ].map(performer => ({
   ...performer,
   image: null,
@@ -219,9 +220,9 @@ function drawNote() {
   }
 }
 
-function drawRole(performer, font, accent, baseline) {
+function drawRole(performer, accent, baseline) {
   const { x, label, roleSize, icon } = performer;
-  context.font = `600 ${roleSize}px ${font.family}`;
+  context.font = `600 ${roleSize}px ${roleFont}`;
   context.fillStyle = accent;
   context.fillText(label, x + roleSize, baseline);
 
@@ -246,7 +247,7 @@ function drawPerformer(performer, font, accent) {
     context.fillStyle = "#171326b3";
     context.fillRect(x, y, size, size);
     context.fillStyle = "#f4eefe";
-    context.font = `500 34px ${font.family}`;
+    context.font = `500 34px ${roleFont}`;
     context.textAlign = "center";
     context.textBaseline = "middle";
     context.fillText(label, x + size / 2, y + size / 2);
@@ -270,7 +271,7 @@ function drawPerformer(performer, font, accent) {
   const nameBaseline = performer.textAbove ? y - 22 : bottomLine - roleSize - 10;
   if (fontSize >= 30) context.fillText(value, x, nameBaseline);
   const roleBaseline = performer.textAbove ? nameBaseline - nameSize - 9 : bottomLine;
-  drawRole(performer, font, accent, roleBaseline);
+  drawRole(performer, accent, roleBaseline);
   context.restore();
   return fontSize >= 30;
 }
@@ -282,10 +283,10 @@ function drawCollaborationMark(accent) {
   context.shadowColor = "#181023";
   context.shadowBlur = 6;
   context.beginPath();
-  context.moveTo(x - 178, y);
+  context.moveTo(x - 155, y);
   context.lineTo(x - 62, y);
   context.moveTo(x + 62, y);
-  context.lineTo(x + 178, y);
+  context.lineTo(x + 155, y);
   context.strokeStyle = accent + "c0";
   context.lineWidth = 2;
   context.stroke();

@@ -24,6 +24,9 @@ select { padding-inline: 10px; }
 input[type=file] { font-size: .8rem; }
 input::file-selector-button { border: 0; padding: 5px 8px; border-radius: 4px; color: #f7f3ff; background: #363047; margin-right: 8px; cursor: pointer; }
 button { font: inherit; cursor: pointer; }
+.advanced { min-width: 0; border: 1px solid #40384e; border-radius: 12px; background: #1b1726; }
+.advanced summary { padding: 11px 13px; cursor: pointer; font-weight: 750; }
+.advanced-fields { padding: 0 13px 14px; }
 #save { min-width: min(100%, 230px); background: #d5c1ff; color: #211737; border: 0; padding: 11px 16px; border-radius: 8px; font-weight: 800; }
 #save:disabled { opacity: .5; cursor: default; }
 .presets { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 7px; }
