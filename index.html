@@ -5,8 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="First Step Projectのコラボ告知画像をフルHDで作成。">
 <title>コラボ画像メーカー | First Step Project</title>
-<link rel="stylesheet" href="style.css?v=5">
-<script defer src="app.js?v=5"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+1+Code:wght@700&amp;family=Noto+Sans+JP:wght@800&amp;family=Noto+Serif+JP:wght@700&amp;family=Zen+Maru+Gothic:wght@700&amp;display=swap">
+<link rel="stylesheet" href="style.css?v=6">
+<script defer src="app.js?v=6"></script>
 </head>
 <body>
 <main>
@@ -58,7 +61,10 @@
 </div>
 <footer class="export">
 <p id="status" role="status"></p>
+<div class="download">
 <button id="save" type="button" disabled>画像を保存</button>
+<p id="download-status" role="status" aria-live="polite"></p>
+</div>
 </footer>
 </main>
 </body>

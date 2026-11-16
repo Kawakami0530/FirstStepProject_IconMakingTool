@@ -27,16 +27,20 @@ button { font: inherit; cursor: pointer; }
 .advanced { min-width: 0; border: 1px solid #40384e; border-radius: 12px; background: #1b1726; }
 .advanced summary { padding: 11px 13px; cursor: pointer; font-weight: 750; }
 .advanced-fields { padding: 0 13px 14px; }
-#save { min-width: min(100%, 230px); background: #d5c1ff; color: #211737; border: 0; padding: 11px 16px; border-radius: 8px; font-weight: 800; }
+.download { width: min(100%, 275px); text-align: center; }
+#download-status { margin: 8px 0 0; }
+#download-status:empty { margin: 0; }
+#save { width: 100%; background: #d5c1ff; color: #211737; border: 0; padding: 11px 16px; border-radius: 8px; font-weight: 800; }
 #save:disabled { opacity: .5; cursor: default; }
 .presets { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 7px; }
 .presets button { border-radius: 7px; min-height: 42px; border: 1px solid #7c6d94; color: white; text-shadow: 0 1px 4px black; font-size: .7rem; font-weight: 800; padding: 0; }
 .presets button[aria-pressed=true] { outline: 2px solid #e0ccff; outline-offset: 2px; }
 :focus-visible { outline: 2px solid #d5c1ff; outline-offset: 3px; }
-#status { font-size: .8rem; color: #ccc3dc; margin: 0; line-height: 1.5; }
+#status, #download-status { font-size: .8rem; color: #ccc3dc; line-height: 1.5; }
+#status { margin: 0; }
 #status:empty { display: none; }
 @media (max-width: 760px) {
   .workspace { display: flex; flex-direction: column; gap: 16px; align-items: stretch; }
   .preview { position: static; }
-  #save { width: 100%; }
+  .download { width: 100%; }
 }

@@ -4,6 +4,7 @@ const canvas = document.querySelector("#preview");
 const context = canvas.getContext("2d", { alpha: false });
 const save = document.querySelector("#save");
 const status = document.querySelector("#status");
+const downloadStatus = document.querySelector("#download-status");
 const presets = document.querySelector("#presets");
 const effectSelect = document.querySelector("#effect");
 const fontSelect = document.querySelector("#font");
@@ -12,6 +13,8 @@ let logoReady = false;
 let background = null;
 let activePreset = 0;
 let exporting = false;
+let fontLoading = false;
+let fontRequest = 0;
 const pending = new Set();
 
 const themes = [
@@ -31,11 +34,15 @@ const effects = {
 };
 
 const fonts = {
-  sans: { family: '"Hiragino Sans", Meiryo, system-ui, sans-serif', weight: 750 },
-  serif: { family: 'Georgia, "Yu Mincho", "Hiragino Mincho ProN", "Noto Serif CJK JP", serif', weight: 600 },
-  rounded: { family: 'ui-rounded, "Hiragino Maru Gothic ProN", "Arial Rounded MT Bold", "Trebuchet MS", sans-serif', weight: 700 },
-  mono: { family: 'ui-monospace, "SFMono-Regular", Consolas, "Courier New", monospace', weight: 700 }
+  sans: { family: "Noto Sans JP", fallback: "sans-serif", weight: 800 },
+  serif: { family: "Noto Serif JP", fallback: "serif", weight: 700 },
+  rounded: { family: "Zen Maru Gothic", fallback: "sans-serif", weight: 700 },
+  mono: { family: "M PLUS 1 Code", fallback: "monospace", weight: 700 }
 };
+
+function selectedFont() {
+  return fonts[fontSelect.value] || fonts.sans;
+}
 
 const roleFont = "system-ui, sans-serif";
 const bottomLine = 865;
@@ -256,7 +263,7 @@ function drawPerformer(performer, font, accent) {
   const value = name.value.trim();
   let fontSize = nameSize;
   do {
-    context.font = `${font.weight} ${fontSize}px ${font.family}`;
+    context.font = `${font.weight} ${fontSize}px "${font.family}", ${font.fallback}`;
     const metrics = context.measureText(value);
     if (Math.max(metrics.width, metrics.actualBoundingBoxRight ?? 0) <= size + 18) break;
     fontSize -= 2;
@@ -304,7 +311,7 @@ function drawCollaborationMark(accent) {
 
 function render() {
   const theme = themes[activePreset];
-  const font = fonts[fontSelect.value] || fonts.sans;
+  const font = selectedFont();
   const effectTheme = background ? themes[1] : theme;
   const accent = effectTheme.colors[3];
   if (background) cover(background, 0, 0, canvas.width, canvas.height);
@@ -333,7 +340,7 @@ function render() {
     const height = logo.naturalHeight * scale;
     context.drawImage(logo, canvas.width - 24 - width, canvas.height - 24 - height, width, height);
   }
-  save.disabled = !ready || !logoReady || pending.size > 0 || exporting;
+  save.disabled = !ready || !logoReady || pending.size > 0 || exporting || fontLoading;
   return longName;
 }
 
@@ -400,9 +407,31 @@ for (const [index, theme] of themes.entries()) {
 }
 updatePresetButtons();
 effectSelect.addEventListener("change", render);
-fontSelect.addEventListener("change", () => {
-  status.textContent = render() ? "画像に収まるよう名前を短くしてください。" : "";
-});
+async function refreshNameFonts() {
+  const request = ++fontRequest;
+  const text = performers.map(performer => performer.name.value.trim()).join("");
+  const font = selectedFont();
+  fontLoading = Boolean(text);
+  status.textContent = "";
+  render();
+  if (!text) return;
+
+  let loaded;
+  try {
+    const faces = await document.fonts.load(`${font.weight} 96px "${font.family}"`, text);
+    loaded = faces.length > 0;
+  } catch {
+    loaded = false;
+  }
+  if (request !== fontRequest) return;
+
+  fontLoading = false;
+  const longName = render();
+  if (!loaded) status.textContent = "書体を読み込めなかったため、端末の代替書体で表示しています。";
+  else if (longName) status.textContent = "画像に収まるよう名前を短くしてください。";
+}
+
+fontSelect.addEventListener("change", refreshNameFonts);
 bindImage("background", image => {
   background = image;
   updatePresetButtons();
@@ -410,9 +439,7 @@ bindImage("background", image => {
 
 for (const performer of performers) {
   bindImage(performer.id, image => { performer.image = image; });
-  performer.name.addEventListener("input", () => {
-    status.textContent = render() ? "画像に収まるよう名前を短くしてください。" : "";
-  });
+  performer.name.addEventListener("input", refreshNameFonts);
 }
 
 logo.addEventListener("load", () => {
@@ -425,6 +452,7 @@ logo.addEventListener("error", () => {
 logo.src = "assets/logo.png";
 
 save.addEventListener("click", () => {
+  downloadStatus.replaceChildren();
   exporting = true;
   render();
   canvas.toBlob(blob => {
@@ -442,7 +470,11 @@ save.addEventListener("click", () => {
     link.click();
     link.remove();
     setTimeout(() => URL.revokeObjectURL(url), 30000);
-    status.textContent = "PNGのダウンロードを開始しました。";
+    downloadStatus.replaceChildren(
+      "画像をダウンロードします。",
+      document.createElement("br"),
+      "ダウンロードフォルダを確認下さい"
+    );
   }, "image/png");
 });
 
