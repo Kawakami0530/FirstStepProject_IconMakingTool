@@ -16,19 +16,14 @@ canvas { border: 1px solid #40384e; display: block; width: 100%; height: auto; b
 .export { display: grid; justify-items: end; gap: 8px; margin-top: 24px; padding-top: 18px; border-top: 1px solid #40384e; }
 .controls { grid-column: 1; grid-row: 1; display: grid; gap: 15px; min-width: 0; }
 fieldset { margin: 0; min-width: 0; padding: 10px 13px 14px; border: 1px solid #40384e; border-radius: 12px; background: #1b1726; }
-legend { padding: 0 6px; font-weight: 750; }
+legend { padding: 0 6px; font-size: .75rem; font-weight: 650; }
 label { display: block; font-size: .85rem; color: #e2d9ee; margin: 8px 0 5px; }
 input, select { width: 100%; min-height: 42px; padding: 7px; border: 1px solid #4d435d; border-radius: 7px; background: #13101c; color: inherit; font: inherit; }
 select { padding-inline: 10px; }
 input[type=file] { font-size: .8rem; }
-.performer-fields legend { font-size: .875rem; font-weight: 650; }
-.performer-fields input::placeholder, .file-caption { color: #a49bb4; opacity: 1; }
-.file-field { position: relative; min-width: 0; margin: 8px 0 0; cursor: pointer; }
-.file-caption { display: block; min-height: 42px; border: 1px solid #4d435d; border-radius: 7px; background: #13101c; padding: 9px 7px; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.file-caption.has-file { color: inherit; }
-.file-field input { position: absolute; inset: 0; height: 100%; opacity: 0; pointer-events: none; }
-.file-field:focus-within .file-caption { outline: 2px solid #d5c1ff; outline-offset: 3px; }
-input::file-selector-button { border: 0; padding: 5px 8px; border-radius: 4px; color: #f7f3ff; background: #363047; margin-right: 8px; cursor: pointer; }
+.performer-fields input[type=file] { margin-top: 8px; }
+.performer-fields input::placeholder { color: #a49bb4; opacity: 1; }
+input::file-selector-button { font: inherit; border: 0; padding: 5px 8px; border-radius: 4px; color: #f7f3ff; background: #363047; margin-right: 8px; cursor: pointer; }
 button { font: inherit; cursor: pointer; }
 .advanced { min-width: 0; border: 1px solid #40384e; border-radius: 12px; background: #1b1726; }
 .advanced summary { padding: 11px 13px; cursor: pointer; font-weight: 750; }
