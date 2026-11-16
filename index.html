@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="First Step Projectのコラボ告知画像をフルHDで作成。">
+<title>コラボ画像メーカー | First Step Project</title>
+<link rel="stylesheet" href="style.css">
+<script defer src="app.js"></script>
+</head>
+<body>
+<main>
+<header><p>First Step Project</p><h1>コラボ画像メーカー</h1></header>
+<div class="workspace">
+<section class="preview" aria-label="プレビュー">
+<canvas id="preview" width="1920" height="1080" aria-label="コラボ告知画像のプレビュー"></canvas>
+<div class="export"><span>1920 × 1080 px</span><button id="save" type="button" disabled>PNGを保存</button></div>
+<p id="status" role="status"></p>
+</section>
+<section class="controls" aria-label="画像の設定">
+<fieldset>
+<legend>背景</legend>
+<div id="presets" class="presets" role="group" aria-label="デフォルト背景"></div>
+<label for="background">背景画像を選ぶ</label>
+<input id="background" type="file" accept="image/*">
+</fieldset>
+<fieldset>
+<legend>ボーカル</legend>
+<label for="vocal">アイコン画像</label><input id="vocal" type="file" accept="image/*">
+<label for="vocal-name">ボーカル名</label><input id="vocal-name" type="text" autocomplete="off" placeholder="ボーカル名を入力">
+</fieldset>
+<fieldset>
+<legend>コンポーザー</legend>
+<label for="composer">アイコン画像</label><input id="composer" type="file" accept="image/*">
+<label for="composer-name">コンポーザー名</label><input id="composer-name" type="text" autocomplete="off" placeholder="コンポーザー名を入力">
+</fieldset>
+<p class="privacy">選んだ画像と名前は端末内で処理され、ページを再読み込みすると消えます。</p>
+</section>
+</div>
+</main>
+</body>
+</html>
