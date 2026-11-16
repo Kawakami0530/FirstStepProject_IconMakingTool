@@ -9,6 +9,8 @@ const presets = document.querySelector("#presets");
 const effectSelect = document.querySelector("#effect");
 const fontSelect = document.querySelector("#font");
 const logo = new Image();
+const logoToggle = document.querySelector("#show-logo");
+const logoError = "ロゴを読み込めませんでした。ページを再読み込みしてください。";
 let logoReady = false;
 let background = null;
 let activePreset = 0;
@@ -339,13 +341,28 @@ function render() {
     performer.name.setCustomValidity(fits ? "" : "画像に収まるよう名前を短くしてください。");
   }
 
-  if (logoReady) {
+  if (logoToggle.checked && logoReady) {
     const scale = Math.min(136 / logo.naturalWidth, 122 / logo.naturalHeight);
     const width = logo.naturalWidth * scale;
     const height = logo.naturalHeight * scale;
-    context.drawImage(logo, canvas.width - 24 - width, canvas.height - 24 - height, width, height);
+    const right = canvas.width - 24;
+    const y = canvas.height - 24 - height;
+    const caption = "First Step Project 2026";
+    context.save();
+    context.font = `600 28px ${roleFont}`;
+    context.textAlign = "right";
+    context.textBaseline = "middle";
+    const labelWidth = Math.ceil(context.measureText(caption).width);
+    context.drawImage(logo, right - labelWidth - 18 - width, y, width, height);
+    context.strokeStyle = "#171326";
+    context.lineWidth = 3;
+    context.lineJoin = "round";
+    context.strokeText(caption, right, y + height / 2);
+    context.fillStyle = "#fff";
+    context.fillText(caption, right, y + height / 2);
+    context.restore();
   }
-  save.disabled = !ready || !logoReady || pending.size > 0 || exporting || fontLoading;
+  save.disabled = !ready || (logoToggle.checked && !logoReady) || pending.size > 0 || exporting || fontLoading;
   return longName;
 }
 
@@ -447,12 +464,17 @@ for (const performer of performers) {
   performer.name.addEventListener("input", refreshNameFonts);
 }
 
+logoToggle.addEventListener("change", () => {
+  if (!logoToggle.checked && status.textContent === logoError) status.textContent = "";
+  render();
+});
+
 logo.addEventListener("load", () => {
   logoReady = true;
   render();
 });
 logo.addEventListener("error", () => {
-  status.textContent = "ロゴを読み込めませんでした。ページを再読み込みしてください。";
+  if (logoToggle.checked) status.textContent = logoError;
 });
 logo.src = "assets/logo.png";
 
@@ -484,9 +506,10 @@ save.addEventListener("click", () => {
 });
 
 window.addEventListener("pageshow", () => {
-  for (const input of document.querySelectorAll("input")) input.value = "";
+  for (const input of document.querySelectorAll("input:not([type=checkbox])")) input.value = "";
   effectSelect.value = "";
   fontSelect.value = "sans";
+  logoToggle.checked = true;
   render();
 }, { once: true });
 render();

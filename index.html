@@ -8,8 +8,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+1+Code:wght@700&amp;family=Noto+Sans+JP:wght@400..800&amp;family=Noto+Serif+JP:wght@700&amp;family=Zen+Maru+Gothic:wght@700&amp;display=swap">
-<link rel="stylesheet" href="style.css?v=8">
-<script defer src="app.js?v=9"></script>
+<link rel="stylesheet" href="style.css?v=10">
+<script defer src="app.js?v=10"></script>
 </head>
 <body>
 <main>
@@ -19,8 +19,9 @@
 <canvas id="preview" width="1920" height="1080" aria-label="コラボ告知画像のプレビュー"></canvas>
 </section>
 <section class="controls" aria-label="画像の設定">
-<fieldset>
-<legend>背景</legend>
+<details class="panel" open>
+<summary>背景</summary>
+<div class="panel-fields">
 <div id="presets" class="presets" role="group" aria-label="デフォルト背景"></div>
 <label for="effect">背景エフェクト</label>
 <select id="effect" autocomplete="off">
@@ -31,20 +32,25 @@
 <option value="prism">プリズム</option>
 <option value="sparkles">きらめき</option>
 </select>
-</fieldset>
-<fieldset class="performer-fields">
-<legend>ボーカル</legend>
+</div>
+</details>
+<details class="panel" open>
+<summary>ボーカル</summary>
+<div class="panel-fields performer-fields">
 <input id="vocal-name" type="text" autocomplete="off" aria-label="ボーカル名" placeholder="ボーカル名">
 <input id="vocal" type="file" accept="image/*" aria-label="ボーカルのアイコン画像">
-</fieldset>
-<fieldset class="performer-fields">
-<legend>コンポーザー</legend>
+</div>
+</details>
+<details class="panel" open>
+<summary>コンポーザー</summary>
+<div class="panel-fields performer-fields">
 <input id="composer-name" type="text" autocomplete="off" aria-label="コンポーザー名" placeholder="コンポーザー名">
 <input id="composer" type="file" accept="image/*" aria-label="コンポーザーのアイコン画像">
-</fieldset>
-<details class="advanced">
+</div>
+</details>
+<details class="panel advanced">
 <summary>詳細設定</summary>
-<div class="advanced-fields">
+<div class="panel-fields">
 <label for="background">好きな背景をアップロード</label>
 <input id="background" type="file" accept="image/*">
 <label for="font">名前の書体（ボーカル・コンポーザー共通）</label>
@@ -54,6 +60,7 @@
 <option value="rounded">丸ゴシック</option>
 <option value="mono">等幅</option>
 </select>
+<label class="logo-setting"><input id="show-logo" type="checkbox" checked> First Step Projectロゴを表示</label>
 </div>
 </details>
 </section>
@@ -63,6 +70,10 @@
 <div class="download">
 <button id="save" type="button" disabled>画像を保存</button>
 <p id="download-status" role="status" aria-live="polite"></p>
+</div>
+<div class="credit">
+<p>Making by ハルミズキ</p>
+<a href="https://x.com/halumizuki" target="_blank" rel="noopener noreferrer">@halumizuki</a>
 </div>
 </footer>
 </main>
